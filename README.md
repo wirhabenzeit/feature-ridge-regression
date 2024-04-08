@@ -16,6 +16,6 @@ The file [feature_ridge_regression.ipynb](feature_ridge_regression.ipynb) contai
 
 ![Figure synthetic data, theoretical errors](https://github.com/wirhabenzeit/feature-ridge-regression/raw/main/figures/art_det.png)
 
-![Figure synthetic data, empirical errors, optimal regularization](https://github.com/wirhabenzeit/feature-ridge-regression/raw/main/figures/art_emp.png)
+![Figure synthetic data, empirical errors, optimal regularization](https://github.com/wirhabenzeit/feature-ridge-regression/raw/main/figures/art_opt_emp.png)
 
-![Figure synthetic data, theoretical errors, optimal regularization](https://github.com/wirhabenzeit/feature-ridge-regression/raw/main/figures/art_det.png)
+![Figure synthetic data, theoretical errors, optimal regularization](https://github.com/wirhabenzeit/feature-ridge-regression/raw/main/figures/art_opt_det.png)

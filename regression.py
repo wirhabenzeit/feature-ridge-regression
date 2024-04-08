@@ -119,11 +119,11 @@ class SCov:
         self.eps = eps
         self.m_cache = {}
 
-    def _m(self, l, n=None, history=False, m0=1):
+    def _m(self, lamb, n=None, history=False, m0=1):
         n = self.p if n is None else n
 
         def iter_m(m):
-            return 1 / (l + np.sum(self.OmegaEig / (n * m * self.OmegaEig + 1)))
+            return 1 / (lamb + np.sum(self.OmegaEig / (n * m * self.OmegaEig + 1)))
 
         m1 = iter_m(m0)
         hist = [abs(m0 - m1)]

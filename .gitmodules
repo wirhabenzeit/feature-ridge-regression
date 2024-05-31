@@ -1,0 +1,3 @@
+[submodule "pyobsplot"] 
+  path = pyobsplot 
+  url = git@github.com:wirhabenzeit/pyobsplot.git

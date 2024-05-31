@@ -682,6 +682,25 @@ def __(choose, df_from_regressions, mo, np, synth_regressions):
 
 
 @app.cell
+def __(Plot, df_art_opt_emp, pl, plot):
+    plot({
+        "marks": [
+            Plot.line(df_art_opt_emp.filter(pl.col("type") == "NN"), dict(x="n", y="genErrRMT_emp", opacity=1, stroke="epoch+step")),
+            Plot.dot(df_art_opt_emp.filter(pl.col("type") == "NN"), dict(x="n", y="genErrEmp_emp", stroke="epoch+step")),
+            Plot.line(df_art_opt_emp.filter(pl.col("type") == "Linear Regression"), dict(x="n", y="genErrRMT_emp", stroke="gray", strokeDasharray=[5,5])),
+            Plot.dot(df_art_opt_emp.filter(pl.col("type") == "Linear Regression"), dict(x="n", y="genErrEmp_emp", stroke="gray")),
+        ],
+        "x": {"type": "log", "label": "# Samples"},
+        "y": {"domain": [0.02, 0.3], "label": "Generalization error", "type": "log"},
+        "grid": True,
+        "width": 400,
+        "height": 250,
+        "color": {"legend": True, "type": "log", "label": "Epoch", "scheme": "viridis"},
+    }, "figures/art_opt_emp1")
+    return
+
+
+@app.cell
 def __(Plot, df_art_opt_emp, js, pl, plot):
     plot({
         "marks": [

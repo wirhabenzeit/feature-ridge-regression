@@ -1,10 +1,10 @@
 import numpy as np
 import polars as pl
 from icecream import ic
-import tensorflow as tf
 from scipy.interpolate import interp1d
 from scipy.integrate import quad_vec
 from scipy.optimize import minimize_scalar
+import tensorflow as tf
 
 
 class GaussianIntegral:
@@ -245,7 +245,7 @@ class FeatureRidgeRegression:
 
     @classmethod
     def empirical(cls, model, train_data=None, test_data=None, emp_avg_data=None, center=True):
-        fmodel = tf.keras.Model(inputs=model.input, outputs=model.layers[-2].output)
+        fmodel = tf.keras.Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
         features = {
             name: fmodel(data[0]).numpy()
             for (name, data) in [
@@ -278,7 +278,7 @@ class FeatureRidgeRegression:
 
     @classmethod
     def linearized(cls, model, train_data=None, test_data=None, emp_avg_data=None, avg=True):
-        fmodel = tf.keras.Model(inputs=model.input, outputs=model.layers[-2].output)
+        fmodel = tf.keras.Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
         features = {name: fmodel(data[0]).numpy() for (name, data) in [("train", train_data), ("test", test_data)]}
         sigma = np.mean(emp_avg_data[1] ** 2) ** 0.5
         x = emp_avg_data[0].reshape(emp_avg_data[0].shape[0], -1)
@@ -416,12 +416,13 @@ class FeatureRidgeRegression:
             if not lambdas:
                 new_res = self.genErrRMT(n=n, l_bounds=(1e-5, 1e5))
                 new_res["n"] = n
+                new_res["kappa"] = 1 / self.sc.m(new_res["lamb"], n=n)
                 if n in ns_emp:
                     new_res["genErrEmp"] = self.genErrEmp(lamb=new_res["lamb"], n=n, repeats=repeats)
                 res.append(new_res)
             else:
                 for ll in lambdas:
-                    new_res = {"n": n, "lamb": ll}
+                    new_res = {"n": n, "lamb": ll, "kappa": 1 / self.sc.m(ll, n=n)}
                     if n in ns:
                         new_res["genErrRMT"] = self.genErrRMT(lamb=ll, n=n)
                     if n in ns_emp:

@@ -285,6 +285,26 @@ def __(FeatureRidgeRegression, Plot, js, keras, np, pl, plt):
 
 
 @app.cell
+def __(Plot):
+    def plot(spec, path):
+        format_options = {"font": "SF Pro Display", "margin": "0pt"}
+        
+        Plot.plot(spec, format="html")
+        Plot.plot(
+            spec,
+            path=f"{path}.pdf",
+            format_options=format_options,
+        )
+        Plot.plot(
+            spec,
+            path=f"{path}.svg",
+            format="svg",
+            format_options=format_options,
+        )
+    return plot,
+
+
+@app.cell
 def __(mo):
     mo.md("# Real Data")
     return
@@ -350,11 +370,11 @@ def __(choose, df_from_regressions, mo, np, real_data, real_regressions):
 
 
 @app.cell
-def __(Plot, df_real_emp, format_options, pl):
+def __(Plot, df_real_emp, pl, plot):
     _plot_vars = {"x": "n", "stroke": "lamb", "fx": "epoch+step"}
     _df_NN = df_real_emp.filter(pl.col("type") == "NN").filter(pl.col("epoch") < 2)
     _df_reg = df_real_emp.filter(pl.col("type") == "Linear Regression")
-    _spec = {
+    plot({
         "marks": [
             Plot.line(_df_NN, _plot_vars | {"y": "genErrRMT_emp"}),
             Plot.line(_df_reg, _plot_vars | {"y": "genErrRMT_emp"}),
@@ -374,22 +394,16 @@ def __(Plot, df_real_emp, format_options, pl):
         "y": {"domain": [0.08, 4], "label": "Generalization error", "type": "log"},
         "grid": True,
         "fx": {"label": "Epoch"},
-    }
-    Plot.plot(_spec, format="html")
-    Plot.plot(
-        _spec,
-        path="figures/real_emp_small.pdf",
-        format_options=format_options,
-    )
+    }, "figures/real_emp_small")
     return
 
 
 @app.cell
-def __(Plot, df_real_emp, format_options, pl):
+def __(Plot, df_real_emp, pl, plot):
     _plot_vars = {"x": "n", "stroke": "lamb", "fx": "epoch+step"}
     _df_NN = df_real_emp.filter(pl.col("type") == "NN")
     _df_reg = df_real_emp.filter(pl.col("type") == "Linear Regression")
-    _spec = {
+    plot({
         "marks": [
             Plot.line(_df_NN, _plot_vars | {"y": "genErrRMT_emp"}),
             Plot.line(_df_reg, _plot_vars | {"y": "genErrRMT_emp"}),
@@ -409,13 +423,7 @@ def __(Plot, df_real_emp, format_options, pl):
         "y": {"domain": [0.04, 3], "label": "Generalization error", "type": "log"},
         "grid": True,
         "fx": {"label": "Epoch"},
-    }
-    Plot.plot(_spec, format="html")
-    Plot.plot(
-        _spec,
-        path="figures/real_emp.pdf",
-        format_options=format_options,
-    )
+    },"figures/real_emp")
     return
 
 
@@ -434,8 +442,8 @@ def __(df_from_regressions, mo, np, real_regressions):
 
 
 @app.cell
-def __(Plot, df_real_det, format_options):
-    _spec = {
+def __(Plot, df_real_det, plot):
+    plot({
         "marks": [
             Plot.line(
                 df_real_det.sort("epoch+step", descending=True),
@@ -449,9 +457,7 @@ def __(Plot, df_real_det, format_options):
         "y": {"domain": [0, 1.2], "label": "Generalization error"},
         "grid": True,
         "fx": {"label": "λ"},
-    }
-    Plot.plot(_spec, path="figures/real_det.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    }, "figures/real_det")
     return
 
 
@@ -471,8 +477,8 @@ def __(choose, df_from_regressions, mo, np, real_regressions):
 
 
 @app.cell
-def __(Plot, df_real_opt_emp, format_options, js, pl):
-    _spec = {
+def __(Plot, df_real_opt_emp, js, pl, plot):
+    plot({
         "marks": [
             Plot.line(df_real_opt_emp.filter(pl.col("type") == "NN"), dict(x="n", y="genErrRMT_emp", opacity=1, fx="epoch+step")),
             Plot.dot(df_real_opt_emp.filter(pl.col("type") == "NN"), dict(x="n", y="genErrEmp_emp", stroke="lamb", fx="epoch+step")),
@@ -487,9 +493,7 @@ def __(Plot, df_real_opt_emp, format_options, js, pl):
         "width": 500,
         "height": 400,
         "color": {"legend": True, "type": "log", "label": "λ"},
-    }
-    Plot.plot(_spec, path="figures/real_opt_emp.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    },"figures/real_opt_emp")
     return
 
 
@@ -503,8 +507,8 @@ def __(df_from_regressions, mo, np, real_regressions):
 
 
 @app.cell
-def __(Plot, df_real_opt_det, format_options, js, pl):
-    _spec = {
+def __(Plot, df_real_opt_det, js, pl, plot):
+    plot({
         "marks": [
             Plot.line(
                 df_real_opt_det.filter(pl.col("type") == "Linear Regression"), dict(x="n", y="genErrRMT_emp", opacity=1, strokeDasharray=[5, 5])
@@ -521,9 +525,7 @@ def __(Plot, df_real_opt_det, format_options, js, pl):
         "width": 300,
         "height": 400,
         "color": {"legend": True, "type": "log", "label": "Epoch"},
-    }
-    Plot.plot(_spec, path="figures/real_opt_det.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    },"figures/real_opt_det")
     return
 
 
@@ -607,10 +609,10 @@ def __(choose, df_from_regressions, mo, np, synth_data, synth_regressions):
 
 
 @app.cell
-def __(Plot, df_art_emp, format_options, pl):
+def __(Plot, df_art_emp, pl, plot):
     _df_NN = df_art_emp.filter(pl.col("type") == "NN")
     _df_reg = df_art_emp.filter(pl.col("type") == "Linear Regression")
-    _spec = {
+    plot({
         "marks": [
             Plot.line(_df_NN, {"x": "n", "stroke": "lamb", "y": "genErrRMT_emp", "fx": "epoch+step"}),
             Plot.line(_df_NN, {"x": "n", "stroke": "lamb", "y": "genErrRMT_lin", "fx": "epoch+step", "strokeDasharray": [5, 5]}),
@@ -626,9 +628,7 @@ def __(Plot, df_art_emp, format_options, pl):
         "y": {"domain": [0.02, 1], "label": "Generalization error", "type": "log"},
         "grid": True,
         "fx": {"label": "Epoch"},
-    }
-    Plot.plot(_spec, path="figures/art_emp.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    }, "figures/art_emp")
     return
 
 
@@ -647,8 +647,8 @@ def __(df_from_regressions, mo, np, synth_regressions):
 
 
 @app.cell
-def __(Plot, df_art_det, format_options):
-    _spec = {
+def __(Plot, df_art_det, plot):
+    plot({
         "marks": [
             Plot.line(
                 df_art_det.sort("epoch+step", descending=True),
@@ -662,9 +662,7 @@ def __(Plot, df_art_det, format_options):
         "y": {"domain": [0.02, 0.5], "label": "Generalization error", "type": "log"},
         "grid": True,
         "fx": {"label": "λ"},
-    }
-    Plot.plot(_spec, path="figures/art_det.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    }, "figures/art_det")
     return
 
 
@@ -684,8 +682,8 @@ def __(choose, df_from_regressions, mo, np, synth_regressions):
 
 
 @app.cell
-def __(Plot, df_art_opt_emp, format_options, js, pl):
-    _spec = {
+def __(Plot, df_art_opt_emp, js, pl, plot):
+    plot({
         "marks": [
             Plot.line(df_art_opt_emp.filter(pl.col("type") == "NN"), dict(x="n", y="genErrRMT_emp", opacity=1, fx="epoch+step")),
             Plot.dot(df_art_opt_emp.filter(pl.col("type") == "NN"), dict(x="n", y="genErrEmp_emp", stroke="lamb", fx="epoch+step")),
@@ -700,9 +698,7 @@ def __(Plot, df_art_opt_emp, format_options, js, pl):
         "width": 500,
         "height": 400,
         "color": {"legend": True, "type": "log", "label": "λ"},
-    }
-    Plot.plot(_spec, path="figures/art_opt_emp.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    }, "figures/art_opt_emp")
     return
 
 
@@ -716,8 +712,8 @@ def __(df_from_regressions, mo, np, synth_regressions):
 
 
 @app.cell
-def __(Plot, df_art_opt_det, format_options, js, pl):
-    _spec = {
+def __(Plot, df_art_opt_det, js, pl, plot):
+    plot({
         "marks": [
             Plot.line(
                 df_art_opt_det.filter(pl.col("type") == "Linear Regression"), dict(x="n", y="genErrRMT_emp", opacity=1, strokeDasharray=[5, 5])
@@ -734,9 +730,7 @@ def __(Plot, df_art_opt_det, format_options, js, pl):
         "width": 300,
         "height": 400,
         "color": {"legend": True, "type": "log", "label": "Epoch"},
-    }
-    Plot.plot(_spec, path="figures/art_opt_det.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    }, "figures/art_opt_det")
     return
 
 
@@ -780,7 +774,7 @@ def __(FeatureRidgeRegression, np, sqrtm):
 
 
 @app.cell
-def __(Plot, format_options, np, pl, rf_regs):
+def __(Plot, np, pl, plot, rf_regs):
     _df_rf = pl.concat(
         [
             entry["reg"]
@@ -789,7 +783,7 @@ def __(Plot, format_options, np, pl, rf_regs):
             for entry in rf_regs
         ]
     )
-    _spec = {
+    plot({
         "marks": [
             Plot.line(_df_rf, dict(x="n", y="genErrRMT", stroke="gamma", opacity=1)),
             Plot.dot(_df_rf, dict(x="n", y="genErrEmp", stroke="gamma")),
@@ -800,9 +794,7 @@ def __(Plot, format_options, np, pl, rf_regs):
         "width": 400,
         "height": 250,
         "color": {"legend": True, "label": "γ", "scheme": "viridis", "domain": [-0.1, 0.9]},
-    }
-    Plot.plot(_spec, path="figures/rf_emp.pdf", format_options=format_options)
-    Plot.plot(_spec, format="html")
+    }, "figures/rf_emp")
     return
 
 
